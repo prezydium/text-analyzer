@@ -1,6 +1,7 @@
 package org.prezydium.textanalyzer.actor;
 
 import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -12,6 +13,12 @@ import java.util.Scanner;
 public class AnalyzerOverlordActor extends AbstractActor {
 
     private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
+
+    private final ActorRef dataCollector;
+
+    public AnalyzerOverlordActor() {
+        this.dataCollector = getContext().actorOf(DataCollectorActor.props(), "data-collector");
+    }
 
     public static Props props() {
         return Props.create(AnalyzerOverlordActor.class, () -> new AnalyzerOverlordActor());
@@ -50,12 +57,14 @@ public class AnalyzerOverlordActor extends AbstractActor {
                  Scanner sc = new Scanner(inputStream, "UTF-8")) {
                 do {
                     StringBuilder sb = new StringBuilder();
-                    while (sc.hasNextLine() && lineCount < 10) {
+                    while (sc.hasNextLine() && lineCount < 1000) {
                         sb.append(sc.nextLine());
                         lineCount++;
                     }
                     lineCount = 0;
-                    log.info(sb.toString());
+                    getContext()
+                            .actorOf(AnalyzerActor.props(dataCollector))
+                            .tell(sb.toString(), getSelf());
                 } while (sc.hasNextLine());
             }
         } catch (IOException e) {
