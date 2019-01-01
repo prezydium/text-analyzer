@@ -9,7 +9,7 @@ public class WordCount implements TextMetric {
 
     public static String METRIC_NAME = "WordCount";
 
-    private Pattern wordPattern = Pattern.compile("\\S+");
+    private Pattern wordPattern = Pattern.compile("[\\p{L}0-9']+");
 
     public BigDecimal processText(String text, Map<String, BigDecimal> tempCache) {
         Matcher wordMatcher = wordPattern.matcher(text);

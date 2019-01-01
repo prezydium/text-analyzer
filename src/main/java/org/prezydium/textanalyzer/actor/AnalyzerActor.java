@@ -5,6 +5,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import org.prezydium.textanalyzer.metrics.AverageWordsLength;
 import org.prezydium.textanalyzer.metrics.SentenceCount;
 import org.prezydium.textanalyzer.metrics.TextMetric;
 import org.prezydium.textanalyzer.metrics.WordCount;
@@ -54,6 +55,7 @@ public class AnalyzerActor extends AbstractActor {
         List<TextMetric> textMetrics = new ArrayList<>();
         textMetrics.add(new WordCount());
         textMetrics.add(new SentenceCount());
+        textMetrics.add(new AverageWordsLength());
         return textMetrics;
     }
 }
