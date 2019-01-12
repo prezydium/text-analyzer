@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class AverageWordsPerSentenceCountTest {
-    
+
     @Test
     public void shouldReturn5() {
         //given

@@ -58,7 +58,7 @@ public class AnalyzerOverlordActor extends AbstractActor {
                 do {
                     StringBuilder sb = new StringBuilder();
                     while (sc.hasNextLine() && lineCount < 1000) {
-                        sb.append(sc.nextLine());
+                        sb.append(sc.nextLine() + "\n");
                         lineCount++;
                     }
                     lineCount = 0;
