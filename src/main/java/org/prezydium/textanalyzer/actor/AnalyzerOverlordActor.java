@@ -16,7 +16,7 @@ public class AnalyzerOverlordActor extends AbstractActor {
 
     private final ActorRef dataCollector;
 
-    public AnalyzerOverlordActor() {
+    private AnalyzerOverlordActor() {
         this.dataCollector = getContext().actorOf(DataCollectorActor.props(), "data-collector");
     }
 
@@ -58,7 +58,7 @@ public class AnalyzerOverlordActor extends AbstractActor {
                 do {
                     StringBuilder sb = new StringBuilder();
                     while (sc.hasNextLine() && lineCount < 1000) {
-                        sb.append(sc.nextLine() + "\n");
+                        sb.append(sc.nextLine()).append("\n");
                         lineCount++;
                     }
                     lineCount = 0;
@@ -70,6 +70,5 @@ public class AnalyzerOverlordActor extends AbstractActor {
         } catch (IOException e) {
             log.error("Error reading file");
         }
-
     }
 }

@@ -25,7 +25,7 @@ public class AnalyzerActor extends AbstractActor {
         return Props.create(AnalyzerActor.class, () -> new AnalyzerActor(dataCollector));
     }
 
-    public AnalyzerActor(ActorRef dataCollector) {
+    private AnalyzerActor(ActorRef dataCollector) {
         this.dataCollector = dataCollector;
         this.textMetrics = createListOfMetrics();
     }
@@ -54,6 +54,7 @@ public class AnalyzerActor extends AbstractActor {
         textMetrics.add(new SentenceCount());
         textMetrics.add(new AverageWordsLength());
         textMetrics.add(new AverageWordsPerSentenceCount());
+        textMetrics.add(new WordIToOtherProportion());
         return textMetrics;
     }
 }

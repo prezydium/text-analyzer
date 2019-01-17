@@ -9,7 +9,6 @@ import org.prezydium.textanalyzer.metrics.WordCount;
 import org.prezydium.textanalyzer.util.DividorUtil;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
