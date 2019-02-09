@@ -8,6 +8,9 @@ import org.prezydium.textanalyzer.metrics.SentenceCount;
 import org.prezydium.textanalyzer.metrics.WordCount;
 import org.prezydium.textanalyzer.util.DividorUtil;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +41,19 @@ public class DataCollectorActor extends AbstractActor {
             return resultsMap;
         }
     }
+    public static class PrintCommand{
+        private void printResultsToFile(Map<String, BigDecimal> results) throws FileNotFoundException {
+            StringBuilder sb = new StringBuilder();
+            results.forEach((k, v) -> sb
+                    .append(k)
+                    .append(": ")
+                    .append(v)
+                    .append("\n"));
+            try (PrintStream writer = new PrintStream(new FileOutputStream("results.txt"))) {
+                writer.append(sb.toString());
+            }
+        }
+    }
 
     @Override
     public void preStart() {
@@ -60,6 +76,8 @@ public class DataCollectorActor extends AbstractActor {
                         log.info(k + " " + metricResult);
                     });
                 })
+                .match(PrintCommand.class, printCommand -> printCommand.printResultsToFile(summedResults)
+                )
                 .build();
     }
 }

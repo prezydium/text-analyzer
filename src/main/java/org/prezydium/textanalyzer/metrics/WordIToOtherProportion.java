@@ -4,6 +4,7 @@ import org.prezydium.textanalyzer.util.DividorUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +13,7 @@ public class WordIToOtherProportion implements TextMetric {
 
     public final static String METRIC_NAME = "WorldIToOtherWords";
 
-    private Pattern wordIPattern = Pattern.compile("I");
+    private Pattern wordIPattern = Pattern.compile("I['\\s]");
 
 
     public BigDecimal processText(String text, Map<String, BigDecimal> tempCache) {
@@ -22,6 +23,9 @@ public class WordIToOtherProportion implements TextMetric {
             count++;
         }
         BigDecimal wordCount = tempCache.get(WordCount.METRIC_NAME);
+        if (wordCount == null){
+           wordCount = new WordCount().processText(text, Collections.emptyMap());
+        }
         return new BigDecimal(count).divide(wordCount, 3, RoundingMode.HALF_UP);
     }
 
