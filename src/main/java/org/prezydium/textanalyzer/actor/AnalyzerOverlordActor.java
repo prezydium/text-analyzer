@@ -52,11 +52,12 @@ public class AnalyzerOverlordActor extends AbstractActor {
 
     private void sendPartOfTextToProcess(String fileName){
         int lineCount = 0;
+        int actorCount = 0;
         try {
             try (FileInputStream inputStream = new FileInputStream(fileName);
                  Scanner sc = new Scanner(inputStream, "UTF-8")) {
                 do {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder("");
                     while (sc.hasNextLine() && lineCount < 1000) {
                         sb.append(sc.nextLine()).append("\n");
                         lineCount++;
@@ -65,7 +66,9 @@ public class AnalyzerOverlordActor extends AbstractActor {
                     getContext()
                             .actorOf(AnalyzerActor.props(dataCollector))
                             .tell(sb.toString(), getSelf());
+                    actorCount++;
                 } while (sc.hasNextLine());
+                dataCollector.tell(actorCount, getSelf());
             }
         } catch (IOException e) {
             log.error("Error reading file");

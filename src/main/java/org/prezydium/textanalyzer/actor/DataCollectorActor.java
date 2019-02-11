@@ -25,8 +25,12 @@ public class DataCollectorActor extends AbstractActor {
 
     private List<String> metricsToBeSummedUp = Arrays.asList(SentenceCount.METRIC_NAME, WordCount.METRIC_NAME);
 
+    private int numberOfAnalyzerActors;
+
+    private int receivedMessages;
+
     public static Props props() {
-        return Props.create(DataCollectorActor.class, () -> new DataCollectorActor());
+        return Props.create(DataCollectorActor.class, DataCollectorActor::new);
     }
 
     public static class AnalysisResults {
@@ -39,19 +43,6 @@ public class DataCollectorActor extends AbstractActor {
 
         public Map<String, BigDecimal> getResultsMap() {
             return resultsMap;
-        }
-    }
-    public static class PrintCommand{
-        private void printResultsToFile(Map<String, BigDecimal> results) throws FileNotFoundException {
-            StringBuilder sb = new StringBuilder();
-            results.forEach((k, v) -> sb
-                    .append(k)
-                    .append(": ")
-                    .append(v)
-                    .append("\n"));
-            try (PrintStream writer = new PrintStream(new FileOutputStream("results.txt"))) {
-                writer.append(sb.toString());
-            }
         }
     }
 
@@ -74,10 +65,29 @@ public class DataCollectorActor extends AbstractActor {
                         }
                         summedResults.put(k, metricResult);
                         log.info(k + " " + metricResult);
+                        receivedMessages++;
+                        if (receivedMessages >= numberOfAnalyzerActors && numberOfAnalyzerActors > 0){
+                            printResultsToFile(summedResults);
+                        }
                     });
                 })
-                .match(PrintCommand.class, printCommand -> printCommand.printResultsToFile(summedResults)
+                .match(Integer.class, x -> numberOfAnalyzerActors = x
                 )
                 .build();
+    }
+
+    private void printResultsToFile(Map<String, BigDecimal> results) {
+        StringBuilder sb = new StringBuilder();
+        results.forEach((k, v) -> sb
+                .append(k)
+                .append(": ")
+                .append(v)
+                .append("\n"));
+        try (PrintStream writer = new PrintStream(new FileOutputStream("results.txt"))) {
+            writer.append(sb.toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }
